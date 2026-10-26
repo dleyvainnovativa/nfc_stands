@@ -1,0 +1,8 @@
+/* =====================================================================
+   main.css — the app's stylesheet entry.
+   Linked directly in <head> via @vite so it's render-blocking (no flash
+   of unstyled content on load). Order matters: Bootstrap first, then
+   theme.css so our tokens/overrides win.
+   ===================================================================== */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import './theme.css';
