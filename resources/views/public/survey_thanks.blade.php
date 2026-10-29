@@ -14,6 +14,9 @@
     <style>
         .survey-toggle { position:fixed; top:.75rem; right:.75rem; z-index:10;
             background:var(--surface); border:1px solid var(--border); }
+        .site-footer { text-align:center; margin-top:1.25rem; font-size:.78rem; }
+        .site-footer a { color:var(--text-subtle); text-decoration:none; }
+        .site-footer a:hover { text-decoration:underline; }
     </style>
 </head>
 <body>
@@ -46,6 +49,9 @@
             @endif
         </div>
     </div>
+    <footer class="site-footer">
+        <a href="{{ url('/') }}">Desarrollado por NFC</a>
+    </footer>
 </div>
 </body>
 </html>

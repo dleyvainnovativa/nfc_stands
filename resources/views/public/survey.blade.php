@@ -33,6 +33,9 @@
         .survey-progress > div { height:100%; width:0; transition:width .25s ease;
             background:linear-gradient(90deg, var(--accent), var(--accent-2)); }
         .q-card.step-invalid { border-color:var(--danger); }
+        .site-footer { text-align:center; margin-top:1.75rem; font-size:.78rem; }
+        .site-footer a { color:var(--text-subtle); text-decoration:none; }
+        .site-footer a:hover { text-decoration:underline; }
     </style>
     @include('partials.brand-style')
 </head>
@@ -121,6 +124,10 @@
                 </div>
             </div>
         </form>
+
+        <footer class="site-footer">
+            <a href="{{ url('/') }}">Desarrollado por NFC</a>
+        </footer>
     </div>
 </div>
 

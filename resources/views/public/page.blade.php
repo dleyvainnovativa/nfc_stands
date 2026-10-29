@@ -12,10 +12,11 @@
         body { margin: 0; font-family: Inter, system-ui, -apple-system, sans-serif; }
         .wrap {
             min-height: 100vh; display: flex; flex-direction: column; align-items: center;
-            padding: 3rem 1.25rem calc(3rem + env(safe-area-inset-bottom, 0px));
+            padding: 3rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+            color: var(--txt);
         }
-        .wrap.bg-gradient { background: linear-gradient(160deg, var(--pp), var(--ps)); color: #fff; }
-        .wrap.bg-plain { background: #f4f5f7; color: #1e2733; }
+        .wrap.bg-gradient { background: linear-gradient(160deg, var(--pp), var(--ps)); }
+        .wrap.bg-plain { background: var(--bgc); }
         .inner { width: 100%; max-width: 460px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
         .logo img { max-height: 84px; max-width: 220px; object-fit: contain; }
         h1 { font-size: 1.6rem; margin: .25rem 0 0; line-height: 1.2; }
@@ -24,20 +25,22 @@
         .plink {
             display: flex; align-items: center; justify-content: center; gap: .6rem;
             padding: .95rem 1rem; font-weight: 600; text-decoration: none;
-            transition: transform .08s ease, filter .15s ease; box-shadow: 0 2px 8px rgba(0,0,0,.08);
+            transition: transform .08s ease, filter .15s ease;
         }
-        .plink:hover { transform: translateY(-1px); filter: brightness(1.03); }
+        .plink:hover { transform: translateY(-1px); filter: brightness(1.04); }
         .plink i { font-size: 1.05rem; }
         .shape-rounded { border-radius: 12px; } .shape-pill { border-radius: 999px; } .shape-square { border-radius: 4px; }
-        .bg-gradient .fill-solid { background: #fff; color: var(--pp); }
-        .bg-gradient .fill-outline { background: transparent; border: 2px solid rgba(255,255,255,.85); color: #fff; box-shadow: none; }
-        .bg-plain .fill-solid { background: var(--pp); color: #fff; }
-        .bg-plain .fill-outline { background: transparent; border: 2px solid var(--pp); color: var(--pp); box-shadow: none; }
+        .plink.fill-solid { background: var(--pp); color: var(--onp); box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+        .plink.fill-outline { background: transparent; border: 2px solid var(--txt); color: var(--txt); }
         .empty { opacity: .8; font-size: .95rem; }
+        .site-footer { margin-top: auto; padding-top: 2rem; text-align: center; font-size: .78rem; opacity: .7; }
+        .site-footer a { color: inherit; text-decoration: none; }
+        .site-footer a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-<div class="wrap bg-{{ $page->bg_style }}" style="--pp:{{ $page->brandPrimary() }};--ps:{{ $page->brandSecondary() }}">
+<div class="wrap bg-{{ $page->bg_style }}"
+     style="--pp:{{ $page->brandPrimary() }};--ps:{{ $page->brandSecondary() }};--bgc:{{ $page->bgColor() }};--txt:{{ $page->textColor() }};--onp:{{ $page->onPrimary() }}">
     <div class="inner">
         @if ($page->logoUrl())
             <div class="logo"><img src="{{ $page->logoUrl() }}" alt="{{ $page->name }}"></div>
@@ -49,7 +52,9 @@
 
         <div class="links">
             @forelse ($page->cleanLinks() as $i => $link)
-                <a class="plink shape-{{ $page->button_shape }} fill-{{ $page->button_fill }}"
+                @php($lbg = $link['bg'] ?? null)
+                <a class="plink shape-{{ $page->button_shape }} {{ $lbg ? '' : 'fill-' . $page->button_fill }}"
+                   @if ($lbg) style="background:{{ $lbg }};color:{{ $link['text'] ?: '#ffffff' }};border:none;box-shadow:0 2px 8px rgba(0,0,0,.12);" @endif
                    href="{{ route('page.link', ['code' => $page->code, 'i' => $i]) }}" rel="noopener">
                     @if (!empty($link['icon']))<i class="{{ $link['icon'] }}"></i>@endif
                     <span>{{ $link['label'] }}</span>
@@ -59,6 +64,10 @@
             @endforelse
         </div>
     </div>
+
+    <footer class="site-footer">
+        <a href="{{ url('/') }}">Desarrollado por NFC</a>
+    </footer>
 </div>
 </body>
 </html>

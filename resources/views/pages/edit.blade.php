@@ -6,6 +6,7 @@
     use App\Models\Page;
     $primary = old('primary_color', $page->primary_color ?: Page::DEFAULT_PRIMARY);
     $secondary = old('secondary_color', $page->secondary_color ?: Page::DEFAULT_SECONDARY);
+    $bgColor = old('bg_color', $page->bg_color ?: Page::DEFAULT_BG);
     if (old('link_url')) {
         $rows = [];
         foreach (old('link_url') as $i => $u) {
@@ -92,6 +93,22 @@
                             </div>
                             @error('secondary_color') <div class="text-danger mt-1" style="font-size:.82rem">{{ $message }}</div> @enderror
                         </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Color de fondo <span class="text-subtle">(modo sólido)</span></label>
+                            <div class="d-flex align-items-center gap-2">
+                                <input type="color" id="bgColorPicker" value="{{ $bgColor }}" style="width:44px;height:38px;padding:2px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--bg-elevated)">
+                                <input type="text" name="bg_color" id="bgColorText" value="{{ $bgColor }}" class="form-control mono @error('bg_color') is-invalid @enderror" maxlength="7">
+                            </div>
+                            @error('bg_color') <div class="text-danger mt-1" style="font-size:.82rem">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Color de texto</label>
+                            <select name="text_mode" id="f_textmode" class="form-select">
+                                @foreach (Page::textModeOptions() as $v => $l)
+                                    <option value="{{ $v }}" @selected(old('text_mode', $page->text_mode) === $v)>{{ $l }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-sm-4">
                             <label class="form-label">Fondo</label>
                             <select name="bg_style" id="f_bg" class="form-select">
@@ -174,7 +191,7 @@
             <div class="card-header">Vista previa</div>
             <div class="card-body">
                 <div id="pagePreview" data-logo="{{ $page->logoUrl() ?? '' }}">
-                    <div class="pp-wrap bg-{{ $page->bg_style }}" style="--pp:{{ $primary }};--ps:{{ $secondary }}">
+                    <div class="pp-wrap pp-bg-{{ $page->bg_style }}" style="--pp:{{ $primary }};--ps:{{ $secondary }};--bgc:{{ $bgColor }};--txt:{{ $page->textColor() }};--onp:{{ $page->onPrimary() }}">
                         <div class="pp-logo"></div>
                         <div class="pp-title"></div>
                         <p class="pp-desc"></p>
@@ -216,19 +233,17 @@
 
 <style>
     #pagePreview { border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); }
-    .pp-wrap { min-height:300px; display:flex; flex-direction:column; align-items:center; padding:1.5rem 1rem; gap:.6rem; }
-    .pp-wrap.bg-gradient { background:linear-gradient(160deg, var(--pp), var(--ps)); color:#fff; }
-    .pp-wrap.bg-plain { background:#f4f5f7; color:#1e2733; }
+    .pp-wrap { min-height:300px; display:flex; flex-direction:column; align-items:center; padding:1.5rem 1rem; gap:.6rem; color:var(--txt); }
+    .pp-wrap.pp-bg-gradient { background:linear-gradient(160deg, var(--pp), var(--ps)); }
+    .pp-wrap.pp-bg-plain { background:var(--bgc); }
     .pp-logo img { max-height:48px; max-width:150px; object-fit:contain; }
     .pp-title { font-weight:700; font-size:1.15rem; text-align:center; }
     .pp-desc { font-size:.82rem; opacity:.9; text-align:center; margin:0; }
     .pp-links { width:100%; max-width:280px; display:flex; flex-direction:column; gap:.5rem; margin-top:.3rem; }
     .pp-link { display:flex; align-items:center; justify-content:center; gap:.45rem; padding:.55rem .7rem; font-weight:600; font-size:.85rem; }
     .pp-link.shape-rounded { border-radius:10px; } .pp-link.shape-pill { border-radius:999px; } .pp-link.shape-square { border-radius:4px; }
-    .bg-gradient .pp-link.fill-solid { background:#fff; color:var(--pp); }
-    .bg-gradient .pp-link.fill-outline { background:transparent; border:2px solid rgba(255,255,255,.85); color:#fff; }
-    .bg-plain .pp-link.fill-solid { background:var(--pp); color:#fff; }
-    .bg-plain .pp-link.fill-outline { background:transparent; border:2px solid var(--pp); color:var(--pp); }
+    .pp-link.fill-solid { background:var(--pp); color:var(--onp); box-shadow:0 2px 6px rgba(0,0,0,.12); }
+    .pp-link.fill-outline { background:transparent; border:2px solid var(--txt); color:var(--txt); }
 </style>
 
 @push('scripts')
@@ -243,13 +258,29 @@
     const el = (id) => document.getElementById(id);
     const pPick = el('primaryPicker'), pText = el('primaryText');
     const sPick = el('secondaryPicker'), sText = el('secondaryText');
+    const bPick = el('bgColorPicker'), bText = el('bgColorText');
 
     function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+    function yiq(h) { h = (h || '').replace('#', ''); if (h.length !== 6) return 255; const r = parseInt(h.substr(0,2),16), g = parseInt(h.substr(2,2),16), b = parseInt(h.substr(4,2),16); return (r*299 + g*587 + b*114) / 1000; }
+    function contrast(h) { return yiq(h) >= 150 ? '#1e2733' : '#ffffff'; }
+    function blend(a, b) { a = (a || '').replace('#',''); b = (b || '').replace('#',''); if (a.length !== 6 || b.length !== 6) return '#888888'; const m = (i) => Math.round((parseInt(a.substr(i,2),16) + parseInt(b.substr(i,2),16)) / 2).toString(16).padStart(2,'0'); return '#' + m(0) + m(2) + m(4); }
 
     function render() {
-        if (hex.test(pText.value)) wrap.style.setProperty('--pp', pText.value);
-        if (hex.test(sText.value)) wrap.style.setProperty('--ps', sText.value);
-        wrap.className = 'pp-wrap bg-' + el('f_bg').value;
+        const prim = hex.test(pText.value) ? pText.value : '{{ $primary }}';
+        const sec = hex.test(sText.value) ? sText.value : '{{ $secondary }}';
+        const bgc = hex.test(bText.value) ? bText.value : '{{ $bgColor }}';
+        const bgStyle = el('f_bg').value;
+        const mode = el('f_textmode').value;
+        const bgRef = bgStyle === 'plain' ? bgc : blend(prim, sec);
+        const txt = mode === 'light' ? '#ffffff' : mode === 'dark' ? '#1e2733' : contrast(bgRef);
+        const onp = contrast(prim);
+
+        wrap.style.setProperty('--pp', prim);
+        wrap.style.setProperty('--ps', sec);
+        wrap.style.setProperty('--bgc', bgc);
+        wrap.style.setProperty('--txt', txt);
+        wrap.style.setProperty('--onp', onp);
+        wrap.className = 'pp-wrap pp-bg-' + bgStyle;
 
         const shape = 'shape-' + el('f_shape').value;
         const fill = 'fill-' + el('f_fill').value;
@@ -267,9 +298,18 @@
             const label = row.querySelector('[name="link_label[]"]').value.trim();
             const url = row.querySelector('[name="link_url[]"]').value.trim();
             const icon = row.querySelector('[name="link_icon[]"]').value;
+            const lbg = row.querySelector('.link-bg-val').value.trim();
+            const ltx = row.querySelector('.link-text-val').value.trim();
             if (!label && !url) return;
             const ico = icon ? '<i class="' + icon + '"></i> ' : '';
-            html += '<span class="pp-link ' + shape + ' ' + fill + '">' + ico + esc(label || url) + '</span>';
+            let cls, styleAttr = '';
+            if (lbg) {
+                cls = 'pp-link ' + shape;
+                styleAttr = ' style="background:' + lbg + ';color:' + (ltx || contrast(lbg)) + ';border:none;box-shadow:0 2px 6px rgba(0,0,0,.12);"';
+            } else {
+                cls = 'pp-link ' + shape + ' ' + fill;
+            }
+            html += '<span class="' + cls + '"' + styleAttr + '>' + ico + esc(label || url) + '</span>';
         });
         wrap.querySelector('.pp-links').innerHTML = html;
     }
@@ -277,10 +317,12 @@
     // Colour pickers ↔ text
     pPick.addEventListener('input', () => { pText.value = pPick.value; render(); });
     sPick.addEventListener('input', () => { sText.value = sPick.value; render(); });
+    bPick.addEventListener('input', () => { bText.value = bPick.value; render(); });
     pText.addEventListener('input', () => { if (hex.test(pText.value)) pPick.value = pText.value; render(); });
     sText.addEventListener('input', () => { if (hex.test(sText.value)) sPick.value = sText.value; render(); });
+    bText.addEventListener('input', () => { if (hex.test(bText.value)) bPick.value = bText.value; render(); });
 
-    ['f_name','f_title','f_desc','f_bg','f_shape','f_fill'].forEach(id => {
+    ['f_name','f_title','f_desc','f_bg','f_shape','f_fill','f_textmode'].forEach(id => {
         el(id).addEventListener('input', render);
         el(id).addEventListener('change', render);
     });
@@ -289,8 +331,14 @@
     const rows = document.getElementById('linkRows');
     document.getElementById('addLink').addEventListener('click', () => {
         const row = rows.querySelector('.link-row').cloneNode(true);
-        row.querySelectorAll('input').forEach(i => i.value = '');
+        row.querySelectorAll('input[type="text"], input[type="url"]').forEach(i => i.value = '');
         row.querySelector('select').selectedIndex = 0;
+        const chk = row.querySelector('.link-custom'); if (chk) chk.checked = false;
+        row.querySelector('.link-colors')?.classList.add('d-none');
+        const bgv = row.querySelector('.link-bg-val'); if (bgv) bgv.value = '';
+        const txv = row.querySelector('.link-text-val'); if (txv) txv.value = '';
+        const bgp = row.querySelector('.link-bg-pick'); if (bgp) bgp.value = '#2e6be6';
+        const txp = row.querySelector('.link-text-pick'); if (txp) txp.value = '#ffffff';
         rows.appendChild(row);
         render();
     });
@@ -300,8 +348,32 @@
             render();
         }
     });
-    rows.addEventListener('input', render);
-    rows.addEventListener('change', render);
+    rows.addEventListener('change', (e) => {
+        if (e.target.classList.contains('link-custom')) {
+            const row = e.target.closest('.link-row');
+            const colors = row.querySelector('.link-colors');
+            const bgVal = row.querySelector('.link-bg-val');
+            const txVal = row.querySelector('.link-text-val');
+            if (e.target.checked) {
+                colors.classList.remove('d-none');
+                bgVal.value = row.querySelector('.link-bg-pick').value;
+                txVal.value = row.querySelector('.link-text-pick').value;
+            } else {
+                colors.classList.add('d-none');
+                bgVal.value = '';
+                txVal.value = '';
+            }
+        }
+        render();
+    });
+    rows.addEventListener('input', (e) => {
+        if (e.target.classList.contains('link-bg-pick')) {
+            e.target.closest('.link-row').querySelector('.link-bg-val').value = e.target.value;
+        } else if (e.target.classList.contains('link-text-pick')) {
+            e.target.closest('.link-row').querySelector('.link-text-val').value = e.target.value;
+        }
+        render();
+    });
 
     // Logo live preview
     const logoInput = document.getElementById('logoInput');

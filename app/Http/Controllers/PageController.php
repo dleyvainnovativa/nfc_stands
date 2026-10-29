@@ -78,6 +78,8 @@ class PageController extends Controller
             'button_shape' => ['required', Rule::in(array_keys(Page::buttonShapeOptions()))],
             'button_fill' => ['required', Rule::in(array_keys(Page::buttonFillOptions()))],
             'bg_style' => ['required', Rule::in(array_keys(Page::bgStyleOptions()))],
+            'bg_color' => ['nullable', 'regex:/^#([0-9a-fA-F]{6})$/'],
+            'text_mode' => ['required', Rule::in(array_keys(Page::textModeOptions()))],
             'logo' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:1024'],
             'link_label' => ['array'],
             'link_label.*' => ['nullable', 'string', 'max:80'],
@@ -85,12 +87,18 @@ class PageController extends Controller
             'link_url.*' => ['nullable', 'url', 'max:2048'],
             'link_icon' => ['array'],
             'link_icon.*' => ['nullable', 'string', Rule::in(array_keys(Page::iconOptions()))],
+            'link_bg' => ['array'],
+            'link_bg.*' => ['nullable', 'regex:/^#([0-9a-fA-F]{6})$/'],
+            'link_text' => ['array'],
+            'link_text.*' => ['nullable', 'regex:/^#([0-9a-fA-F]{6})$/'],
         ]);
 
         // Build the link list (skip rows without a URL).
         $labels = $request->input('link_label', []);
         $urls = $request->input('link_url', []);
         $icons = $request->input('link_icon', []);
+        $bgs = $request->input('link_bg', []);
+        $texts = $request->input('link_text', []);
         $links = [];
         foreach ($urls as $i => $u) {
             $u = trim((string) $u);
@@ -101,6 +109,8 @@ class PageController extends Controller
                 'label' => trim((string) ($labels[$i] ?? '')) ?: $u,
                 'url'   => $u,
                 'icon'  => ($icons[$i] ?? '') ?: null,
+                'bg'    => ($bgs[$i] ?? '') ?: null,
+                'text'  => ($texts[$i] ?? '') ?: null,
             ];
         }
 
@@ -124,6 +134,8 @@ class PageController extends Controller
             'button_shape' => $data['button_shape'],
             'button_fill' => $data['button_fill'],
             'bg_style' => $data['bg_style'],
+            'bg_color' => $data['bg_color'] ?? null,
+            'text_mode' => $data['text_mode'],
             'links' => $links,
         ])->save();
 
