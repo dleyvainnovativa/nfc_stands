@@ -22,11 +22,13 @@
         <a href="{{ route('stands.edit', $stand) }}" class="btn btn-outline-secondary btn-sm">
             <i class="fa-solid fa-pen me-1"></i> Editar
         </a>
+        @if(auth()->user()->isSuperAdmin())
         <form method="POST" action="{{ route('stands.destroy', $stand) }}"
               onsubmit="return confirm('¿Eliminar este stand? También se borra el historial de escaneos.')">
             @csrf @method('DELETE')
             <button class="btn btn-outline-secondary btn-sm" style="color:var(--danger)"><i class="fa-solid fa-trash"></i></button>
         </form>
+        @endif
     </div>
 </div>
 
@@ -88,34 +90,15 @@
     <div class="card-body"><canvas id="scanChart" height="90"></canvas></div>
 </div>
 
-@if ($stand->destination_type === \App\Models\Stand::TYPE_HUB)
+@if ($stand->destination_type === \App\Models\Stand::TYPE_PAGE && !empty($stand->destination_config['page_id']))
     <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <span>Clics en enlaces</span>
-            @php($ctr = $stand->scans_total > 0 ? round($totalClicks / $stand->scans_total * 100) : null)
-            <span class="text-muted-2" style="font-size:.85rem">
-                {{ number_format($totalClicks) }} clics @if($ctr !== null)· {{ $ctr }}% de los escaneos tocaron un enlace @endif
-            </span>
-        </div>
-        <div class="card-body">
-            @if ($clicks->isEmpty())
-                <div class="text-muted-2" style="font-size:.9rem">Aún no hay toques en enlaces.</div>
-            @else
-                <div class="d-flex flex-column gap-2">
-                    @foreach ($clicks as $c)
-                        @php($pct = $totalClicks > 0 ? round($c->clicks / $totalClicks * 100) : 0)
-                        <div>
-                            <div class="d-flex justify-content-between" style="font-size:.88rem">
-                                <span class="text-truncate" style="max-width:70%">{{ $c->label ?: $c->url }}</span>
-                                <span class="text-muted-2">{{ number_format($c->clicks) }} · {{ $pct }}%</span>
-                            </div>
-                            <div style="height:8px;border-radius:999px;background:var(--bg-sunken);overflow:hidden;margin-top:3px">
-                                <div style="height:100%;width:{{ $pct }}%;background:var(--accent);border-radius:999px"></div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
+        <div class="card-body d-flex align-items-center gap-3 flex-wrap">
+            <div class="stat-icon"><i class="fa-solid fa-link"></i></div>
+            <div class="flex-grow-1">
+                <div class="fw-semibold">Página vinculada</div>
+                <div class="text-muted-2" style="font-size:.9rem">Los clics en los enlaces se miden en la página.</div>
+            </div>
+            <a href="{{ route('pages.edit', $stand->destination_config['page_id']) }}" class="btn btn-outline-secondary btn-sm">Ver página</a>
         </div>
     </div>
 @endif

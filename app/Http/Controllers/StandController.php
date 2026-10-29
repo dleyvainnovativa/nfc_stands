@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GooglePlace;
-use App\Models\HubLinkClick;
+use App\Models\Page;
 use App\Models\Stand;
 use App\Models\Survey;
 use App\Support\CurrentTenant;
@@ -61,19 +61,7 @@ class StandController extends Controller
         $chart = $this->dailySeries($stand, 30);
         $recent = $stand->scanEvents()->orderByDesc('occurred_at')->limit(15)->get();
 
-        // Hub stands: which links got tapped (grouped by URL, snapshot-accurate).
-        $clicks = collect();
-        $totalClicks = 0;
-        if ($stand->destination_type === Stand::TYPE_HUB) {
-            $clicks = HubLinkClick::where('stand_id', $stand->id)
-                ->selectRaw('url, MAX(label) as label, COUNT(*) as clicks')
-                ->groupBy('url')
-                ->orderByDesc('clicks')
-                ->get();
-            $totalClicks = (int) $clicks->sum('clicks');
-        }
-
-        return view('stands.show', compact('stand', 'chart', 'recent', 'clicks', 'totalClicks'));
+        return view('stands.show', compact('stand', 'chart', 'recent'));
     }
 
     public function edit(Stand $stand)
@@ -107,6 +95,7 @@ class StandController extends Controller
             'stand' => $stand,
             'surveys' => CurrentTenant::id() ? Survey::orderBy('title')->get(['id', 'title', 'status', 'code']) : collect(),
             'places' => CurrentTenant::id() ? GooglePlace::orderBy('label')->get(['id', 'label', 'name', 'place_id']) : collect(),
+            'pages' => CurrentTenant::id() ? Page::orderBy('name')->get(['id', 'name', 'code', 'is_active']) : collect(),
         ];
     }
 
@@ -152,23 +141,17 @@ class StandController extends Controller
                 $config = ['google_place_id' => $place->id, 'review_url' => $place->writeReviewUrl()];
                 break;
 
-            default: // hub
-                $request->validate([
-                    'hub_title' => ['nullable', 'string', 'max:120'],
-                    'link_label' => ['array'],
-                    'link_label.*' => ['nullable', 'string', 'max:80'],
-                    'link_url' => ['array'],
-                    'link_url.*' => ['nullable', 'url', 'max:2048'],
+            case Stand::TYPE_PAGE:
+                $extra = $request->validate([
+                    'page_id' => ['required', Rule::exists('pages', 'id')->where(fn ($q) =>
+                        $q->where('tenant_id', CurrentTenant::id()))],
                 ]);
-                $labels = $request->input('link_label', []);
-                $urls = $request->input('link_url', []);
-                $links = [];
-                foreach ($urls as $i => $u) {
-                    $u = trim((string) $u);
-                    if ($u === '') continue;
-                    $links[] = ['label' => trim((string) ($labels[$i] ?? '')) ?: $u, 'url' => $u];
-                }
-                $config = ['title' => $request->input('hub_title') ?: ($base['label'] ?? ''), 'links' => $links];
+                $page = Page::findOrFail($extra['page_id']);
+                $config = ['page_id' => $page->id, 'page_code' => $page->code];
+                break;
+
+            default:
+                $config = [];
         }
 
         $base['destination_config'] = $config;

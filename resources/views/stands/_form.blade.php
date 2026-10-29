@@ -1,12 +1,12 @@
 @php
     $type = old('destination_type', $stand->destination_type);
-    $existingLinks = $stand->destination_type === 'hub' ? ($stand->destination_config['links'] ?? []) : [];
-    $hubTitle = $stand->destination_config['title'] ?? '';
     $directUrl = $stand->destination_type === 'direct' ? ($stand->destination_config['url'] ?? '') : '';
     $surveyId = old('survey_id', $stand->destination_type === 'survey' ? ($stand->destination_config['survey_id'] ?? '') : '');
     $placeId = old('google_place_id', $stand->destination_type === 'reviews' ? ($stand->destination_config['google_place_id'] ?? '') : '');
+    $pageId = old('page_id', $stand->destination_type === 'page' ? ($stand->destination_config['page_id'] ?? '') : '');
     $surveys = $surveys ?? collect();
     $places = $places ?? collect();
+    $pages = $pages ?? collect();
 @endphp
 
 <div class="row g-3">
@@ -41,6 +41,31 @@
     <input type="url" name="url" class="form-control" maxlength="2048"
            value="{{ old('url', $directUrl) }}" placeholder="https://…">
     <div class="form-text text-muted-2">La etiqueta redirige directo aquí al escanear.</div>
+</div>
+
+{{-- Página (linktree) --}}
+<div data-dest="page" class="{{ $type === 'page' ? '' : 'd-none' }}">
+    <label class="form-label">Página</label>
+    @if ($pages->isEmpty())
+        <div class="text-muted-2" style="font-size:.9rem">
+            Aún no hay páginas.
+            @if (auth()->user()->isSuperAdmin())
+                <a href="{{ route('pages.create') }}">Crea una</a> primero.
+            @else
+                Pide al administrador que cree una.
+            @endif
+        </div>
+    @else
+        <select name="page_id" class="form-select">
+            <option value="">Elige una página…</option>
+            @foreach ($pages as $p)
+                <option value="{{ $p->id }}" @selected((string)$pageId === (string)$p->id)>
+                    {{ $p->name }} @unless($p->is_active) (oculta) @endunless
+                </option>
+            @endforeach
+        </select>
+        <div class="form-text text-muted-2">La etiqueta redirige a la página pública. Edítala en <a href="{{ route('pages.index') }}">Páginas</a>.</div>
+    @endif
 </div>
 
 {{-- Survey --}}
@@ -79,36 +104,6 @@
     @endif
 </div>
 
-{{-- Hub --}}
-<div data-dest="hub" class="{{ $type === 'hub' ? '' : 'd-none' }}">
-    <div class="mb-3">
-        <label class="form-label">Título del hub</label>
-        <input type="text" name="hub_title" class="form-control" maxlength="120"
-               value="{{ old('hub_title', $hubTitle) }}" placeholder="Se muestra sobre los botones">
-    </div>
-
-    <label class="form-label">Enlaces</label>
-    <div id="linkRows" class="d-flex flex-column gap-2">
-        @php($rows = old('link_url') ? array_map(fn($u,$i)=>['label'=>old('link_label')[$i]??'','url'=>$u], old('link_url'), array_keys(old('link_url'))) : $existingLinks)
-        @forelse ($rows as $link)
-            <div class="d-flex gap-2 link-row">
-                <input type="text" name="link_label[]" class="form-control" placeholder="Texto del botón" value="{{ $link['label'] ?? '' }}">
-                <input type="url" name="link_url[]" class="form-control" placeholder="https://…" value="{{ $link['url'] ?? '' }}">
-                <button type="button" class="btn btn-outline-secondary remove-row"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-        @empty
-            <div class="d-flex gap-2 link-row">
-                <input type="text" name="link_label[]" class="form-control" placeholder="Texto del botón">
-                <input type="url" name="link_url[]" class="form-control" placeholder="https://…">
-                <button type="button" class="btn btn-outline-secondary remove-row"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-        @endforelse
-    </div>
-    <button type="button" id="addLink" class="btn btn-outline-secondary btn-sm mt-2">
-        <i class="fa-solid fa-plus me-1"></i> Agregar enlace
-    </button>
-</div>
-
 @push('scripts')
 <script>
     (function () {
@@ -116,18 +111,6 @@
         const panels = document.querySelectorAll('[data-dest]');
         function sync() { panels.forEach(p => p.classList.toggle('d-none', p.dataset.dest !== type.value)); }
         type.addEventListener('change', sync); sync();
-
-        const rows = document.getElementById('linkRows');
-        document.getElementById('addLink')?.addEventListener('click', () => {
-            const row = rows.querySelector('.link-row').cloneNode(true);
-            row.querySelectorAll('input').forEach(i => i.value = '');
-            rows.appendChild(row);
-        });
-        rows?.addEventListener('click', (e) => {
-            if (e.target.closest('.remove-row') && rows.querySelectorAll('.link-row').length > 1) {
-                e.target.closest('.link-row').remove();
-            }
-        });
     })();
 </script>
 @endpush

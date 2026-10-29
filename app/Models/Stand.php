@@ -16,7 +16,7 @@ class Stand extends Model
     public const STATUS_DISABLED = 'disabled';
 
     public const TYPE_DIRECT = 'direct';
-    public const TYPE_HUB = 'hub';
+    public const TYPE_PAGE = 'page';
     public const TYPE_SURVEY = 'survey';
     public const TYPE_REVIEWS = 'reviews';
 
@@ -85,7 +85,9 @@ class Stand extends Model
             self::TYPE_REVIEWS => filled($cfg['review_url'] ?? null)
                 ? ['kind' => 'redirect', 'url' => $cfg['review_url']]
                 : null,
-            self::TYPE_HUB => ['kind' => 'hub'],
+            self::TYPE_PAGE => filled($cfg['page_code'] ?? null)
+                ? ['kind' => 'redirect', 'url' => url('/p/' . $cfg['page_code'])]
+                : null,
             self::TYPE_SURVEY => filled($cfg['survey_code'] ?? null)
                 ? ['kind' => 'survey', 'survey_code' => $cfg['survey_code']]
                 : null,
@@ -111,7 +113,7 @@ class Stand extends Model
     {
         return [
             self::TYPE_DIRECT => 'Enlace directo',
-            self::TYPE_HUB => 'Hub de enlaces',
+            self::TYPE_PAGE => 'Página (linktree)',
             self::TYPE_SURVEY => 'Encuesta',
             self::TYPE_REVIEWS => 'Reseña de Google',
         ];

@@ -16,15 +16,20 @@
         <a href="{{ route('surveys.index') }}" class="nav-link {{ request()->routeIs('surveys.*') ? 'active' : '' }}">
             <i class="fa-solid fa-clipboard-list"></i> Encuestas
         </a>
+        <a href="{{ route('pages.index') }}" class="nav-link {{ request()->routeIs('pages.*') ? 'active' : '' }}">
+            <i class="fa-solid fa-sitemap"></i> Páginas
+        </a>
         <a href="{{ route('google.index') }}" class="nav-link {{ request()->routeIs('google.*') ? 'active' : '' }}">
             <i class="fa-brands fa-google"></i> Reseñas de Google
-        </a>
-        <a href="{{ route('stands.claim') }}" class="nav-link {{ request()->routeIs('stands.claim') ? 'active' : '' }}">
-            <i class="fa-solid fa-plus-circle"></i> Reclamar etiqueta
         </a>
         <a href="{{ route('brand.edit') }}" class="nav-link {{ request()->routeIs('brand.*') ? 'active' : '' }}">
             <i class="fa-solid fa-palette"></i> Marca
         </a>
+        @if($u->isSuperAdmin())
+            <a href="{{ route('stands.claim') }}" class="nav-link {{ request()->routeIs('stands.claim') ? 'active' : '' }}">
+                <i class="fa-solid fa-plus-circle"></i> Reclamar etiqueta
+            </a>
+        @endif
 
         @if($u->isSuperAdmin())
             <div class="nav-section">Plataforma</div>

@@ -5,6 +5,7 @@
 @section('content')
 <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
     <h1 class="h4 fw-bold mb-0">Stands</h1>
+    @if(auth()->user()->isSuperAdmin())
     <div class="d-flex gap-2">
         <a href="{{ route('stands.claim') }}" class="btn btn-outline-secondary btn-sm">
             <i class="fa-solid fa-plus-circle me-1"></i> Reclamar etiqueta
@@ -13,6 +14,7 @@
             <i class="fa-solid fa-plus me-1"></i> Nuevo stand
         </a>
     </div>
+    @endif
 </div>
 
 <form method="GET" class="row g-2 mb-3" style="max-width:560px">

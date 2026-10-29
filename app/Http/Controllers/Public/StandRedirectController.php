@@ -41,7 +41,6 @@ class StandRedirectController extends Controller
             'survey'   => redirect()->to(
                 url('/s/' . $destination['survey_code']) . '?via=' . $stand->code, 302
             ),
-            'hub'      => view('public.hub', ['stand' => $stand]),
             default    => response()->view('public.inactive', ['reason' => 'inactive'], 200),
         };
     }

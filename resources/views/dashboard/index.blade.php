@@ -10,11 +10,11 @@
             Alcance: <span class="fw-semibold">{{ $scope }}</span>
         </p>
     </div>
-    @unless($platformView)
+    @if(auth()->user()->isSuperAdmin() && !$platformView)
         <a href="{{ route('stands.create') }}" class="btn btn-primary btn-sm">
             <i class="fa-solid fa-plus me-1"></i> Nuevo stand
         </a>
-    @endunless
+    @endif
 </div>
 
 <div class="row g-3 mb-4">

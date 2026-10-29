@@ -68,6 +68,11 @@ class Tenant extends Model
         return $this->hasMany(Survey::class);
     }
 
+    public function pages(): HasMany
+    {
+        return $this->hasMany(Page::class);
+    }
+
     public function googlePlaces(): HasMany
     {
         return $this->hasMany(GooglePlace::class);

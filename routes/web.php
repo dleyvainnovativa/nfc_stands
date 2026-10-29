@@ -7,7 +7,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GooglePlaceController;
-use App\Http\Controllers\Public\HubLinkController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\Public\PageController as PublicPageController;
 use App\Http\Controllers\Public\StandRedirectController;
 use App\Http\Controllers\Public\SurveyResponseController;
 use App\Http\Controllers\StandClaimController;
@@ -24,7 +25,9 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/t/{code}', [StandRedirectController::class, 'show'])->name('stand.public');
-Route::get('/t/{code}/go/{i}', [HubLinkController::class, 'go'])->whereNumber('i')->name('stand.link');
+
+Route::get('/p/{code}', [PublicPageController::class, 'show'])->name('page.public');
+Route::get('/p/{code}/go/{i}', [PublicPageController::class, 'go'])->whereNumber('i')->name('page.link');
 
 Route::get('/s/{code}', [SurveyResponseController::class, 'show'])->name('survey.public');
 Route::post('/s/{code}', [SurveyResponseController::class, 'store'])->name('survey.public.submit');
@@ -51,16 +54,39 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPER_ADMIN . ',' . User::ROLE_C
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    /* ---- Stands ---- */
-    Route::get('/stands/claim', [StandClaimController::class, 'show'])->name('stands.claim');
-    Route::post('/stands/claim', [StandClaimController::class, 'store'])->name('stands.claim.store');
-    Route::resource('stands', StandController::class)->except(['show']);
+    /* ---- Stands ----
+       Admin creates stands / blank tags / claims; clients only list, view and
+       repoint existing stands. Admin-only routes are registered first so the
+       literal paths win over /stands/{stand}. */
+    Route::middleware('role:' . User::ROLE_SUPER_ADMIN)->group(function () {
+        Route::get('/stands/claim', [StandClaimController::class, 'show'])->name('stands.claim');
+        Route::post('/stands/claim', [StandClaimController::class, 'store'])->name('stands.claim.store');
+        Route::get('/stands/create', [StandController::class, 'create'])->name('stands.create');
+        Route::post('/stands', [StandController::class, 'store'])->name('stands.store');
+        Route::delete('/stands/{stand}', [StandController::class, 'destroy'])->name('stands.destroy');
+    });
+    Route::get('/stands', [StandController::class, 'index'])->name('stands.index');
+    Route::get('/stands/{stand}/edit', [StandController::class, 'edit'])->name('stands.edit');
+    Route::put('/stands/{stand}', [StandController::class, 'update'])->name('stands.update');
     Route::get('/stands/{stand}', [StandController::class, 'show'])->name('stands.show');
     Route::get('/stands/{stand}/qr', [StandQrController::class, 'svg'])->name('stands.qr');
     Route::get('/stands/{stand}/qr/print', [StandQrController::class, 'print'])->name('stands.qr.print');
 
     /* ---- Surveys ---- */
     Route::resource('surveys', SurveyController::class);
+
+    /* ---- Pages (linktree) ----
+       Admin creates, publishes (toggle) and deletes; clients edit content. */
+    Route::middleware('role:' . User::ROLE_SUPER_ADMIN)->group(function () {
+        Route::get('/pages/create', [PageController::class, 'create'])->name('pages.create');
+        Route::post('/pages', [PageController::class, 'store'])->name('pages.store');
+        Route::post('/pages/{page}/toggle', [PageController::class, 'toggle'])->name('pages.toggle');
+        Route::delete('/pages/{page}', [PageController::class, 'destroy'])->name('pages.destroy');
+    });
+    Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
+    Route::get('/pages/{page}/edit', [PageController::class, 'edit'])->name('pages.edit');
+    Route::put('/pages/{page}', [PageController::class, 'update'])->name('pages.update');
+    Route::get('/pages/{page}/qr', [PageController::class, 'qr'])->name('pages.qr');
 
     /* ---- Brand (per-tenant) ---- */
     Route::get('/marca', [BrandController::class, 'edit'])->name('brand.edit');

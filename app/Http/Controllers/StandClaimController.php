@@ -47,10 +47,10 @@ class StandClaimController extends Controller
         $stand->tenant_id = $tenantId;
         $stand->status = Stand::STATUS_ACTIVE;
         $stand->claimed_at = Carbon::now();
-        // Give it a sensible default so the first scan doesn't dead-end.
+        // Start empty; the admin picks the destination on the next screen.
         if (empty($stand->destination_config)) {
-            $stand->destination_type = Stand::TYPE_HUB;
-            $stand->destination_config = ['title' => 'Bienvenido', 'links' => []];
+            $stand->destination_type = Stand::TYPE_DIRECT;
+            $stand->destination_config = ['url' => ''];
         }
         $stand->save();
 
