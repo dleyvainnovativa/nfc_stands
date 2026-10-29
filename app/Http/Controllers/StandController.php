@@ -150,6 +150,20 @@ class StandController extends Controller
                 $config = ['page_id' => $page->id, 'page_code' => $page->code];
                 break;
 
+            case Stand::TYPE_WIFI:
+                $extra = $request->validate([
+                    'wifi_ssid' => ['required', 'string', 'max:32'],
+                    'wifi_encryption' => ['required', Rule::in(['WPA2', 'WPA_WPA2', 'OPEN'])],
+                    'wifi_password' => ['nullable', 'string', 'max:63', 'required_unless:wifi_encryption,OPEN'],
+                ]);
+                $config = [
+                    'ssid' => $extra['wifi_ssid'],
+                    'auth' => $extra['wifi_encryption'],
+                    'password' => $extra['wifi_encryption'] === 'OPEN' ? '' : ($extra['wifi_password'] ?? ''),
+                    'hidden' => $request->boolean('wifi_hidden'),
+                ];
+                break;
+
             default:
                 $config = [];
         }

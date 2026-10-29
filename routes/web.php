@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\NfcManagerController;
 use App\Http\Controllers\Admin\TagBatchController;
 use App\Http\Controllers\Admin\TagQrController;
 use App\Http\Controllers\Admin\TenantsController;
@@ -111,5 +112,12 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPER_ADMIN . ',' . User::ROLE_C
         Route::post('/admin/tags', [TagBatchController::class, 'store'])->name('admin.tags.store');
         Route::get('/admin/tags/export', [TagBatchController::class, 'export'])->name('admin.tags.export');
         Route::get('/admin/tags/qr-sheet', [TagQrController::class, 'sheet'])->name('admin.tags.qr_sheet');
+
+        /* ---- NFC writer console (Web NFC) ---- */
+        Route::get('/admin/nfc', [NfcManagerController::class, 'index'])->name('admin.nfc.index');
+        Route::get('/admin/nfc/stands', [NfcManagerController::class, 'stands'])->name('admin.nfc.stands');
+        Route::get('/admin/nfc/lookup/{code}', [NfcManagerController::class, 'lookup'])->name('admin.nfc.lookup');
+        Route::post('/admin/nfc/stands/{id}/encoded', [NfcManagerController::class, 'markEncoded'])->whereNumber('id')->name('admin.nfc.encoded');
+        Route::delete('/admin/nfc/stands/{id}/encoded', [NfcManagerController::class, 'unmarkEncoded'])->whereNumber('id')->name('admin.nfc.unencoded');
     });
 });

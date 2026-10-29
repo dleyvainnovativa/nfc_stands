@@ -36,6 +36,9 @@
             <a href="{{ route('admin.tags.index') }}" class="nav-link {{ request()->routeIs('admin.tags.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-tags"></i> Etiquetas en blanco
             </a>
+            <a href="{{ route('admin.nfc.index') }}" class="nav-link {{ request()->routeIs('admin.nfc.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-pen-to-square"></i> Escribir NFC
+            </a>
             <a href="{{ route('admin.tenants.index') }}" class="nav-link {{ request()->routeIs('admin.tenants.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-building"></i> Clientes
             </a>

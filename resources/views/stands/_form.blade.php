@@ -104,6 +104,46 @@
     @endif
 </div>
 
+{{-- WiFi --}}
+@php
+    $wc = $stand->destination_type === 'wifi' ? ($stand->destination_config ?? []) : [];
+    $wifiEnc = old('wifi_encryption', $wc['auth'] ?? 'WPA2');
+@endphp
+<div data-dest="wifi" class="{{ $type === 'wifi' ? '' : 'd-none' }}">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Nombre de la red (SSID)</label>
+            <input type="text" name="wifi_ssid" class="form-control" maxlength="32"
+                   value="{{ old('wifi_ssid', $wc['ssid'] ?? '') }}" placeholder="MiRestaurante_WiFi">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Seguridad</label>
+            <select name="wifi_encryption" id="wifiEnc" class="form-select">
+                @foreach (['WPA2' => 'WPA2', 'WPA_WPA2' => 'WPA/WPA2', 'OPEN' => 'Abierta'] as $v => $l)
+                    <option value="{{ $v }}" @selected($wifiEnc === $v)>{{ $l }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="wifiHidden" name="wifi_hidden" value="1"
+                       @checked(old('wifi_hidden', $wc['hidden'] ?? false))>
+                <label class="form-check-label" for="wifiHidden">Red oculta</label>
+            </div>
+        </div>
+        <div class="col-md-6" data-wifi-pass>
+            <label class="form-label">Contraseña</label>
+            <input type="text" name="wifi_password" class="form-control" maxlength="63"
+                   value="{{ old('wifi_password', $wc['password'] ?? '') }}" placeholder="Contraseña de la red">
+        </div>
+    </div>
+    <div class="form-text text-muted-2">
+        La contraseña se escribe <b>directamente en la etiqueta</b> (no pasa por el servidor), así el teléfono
+        se conecta al acercarse. Si cambias la contraseña del WiFi tendrás que <b>reescribir</b> las etiquetas, y
+        no hay estadísticas de escaneo para este tipo. Las redes ocultas pueden no conectarse solas en algunos teléfonos.
+    </div>
+</div>
+
 @push('scripts')
 <script>
     (function () {
@@ -111,6 +151,12 @@
         const panels = document.querySelectorAll('[data-dest]');
         function sync() { panels.forEach(p => p.classList.toggle('d-none', p.dataset.dest !== type.value)); }
         type.addEventListener('change', sync); sync();
+
+        // WiFi: hide the password field for an open network.
+        const wifiEnc = document.getElementById('wifiEnc');
+        const wifiPass = document.querySelector('[data-wifi-pass]');
+        function syncWifi() { if (wifiEnc && wifiPass) wifiPass.classList.toggle('d-none', wifiEnc.value === 'OPEN'); }
+        wifiEnc?.addEventListener('change', syncWifi); syncWifi();
     })();
 </script>
 @endpush
