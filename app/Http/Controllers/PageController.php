@@ -80,6 +80,7 @@ class PageController extends Controller
             'bg_style' => ['required', Rule::in(array_keys(Page::bgStyleOptions()))],
             'bg_color' => ['nullable', 'regex:/^#([0-9a-fA-F]{6})$/'],
             'text_mode' => ['required', Rule::in(array_keys(Page::textModeOptions()))],
+            'font_family' => ['nullable', Rule::in(array_keys(\App\Support\GoogleFont::options()))],
             'logo' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:1024'],
             'link_label' => ['array'],
             'link_label.*' => ['nullable', 'string', 'max:80'],
@@ -136,6 +137,7 @@ class PageController extends Controller
             'bg_style' => $data['bg_style'],
             'bg_color' => $data['bg_color'] ?? null,
             'text_mode' => $data['text_mode'],
+            'font_family' => ($data['font_family'] ?? '') ?: null,
             'links' => $links,
         ])->save();
 

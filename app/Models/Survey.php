@@ -17,7 +17,7 @@ class Survey extends Model
 
     protected $fillable = [
         'tenant_id', 'code', 'title', 'description', 'status', 'thank_you_message',
-        'paginated', 'collect_contact', 'return_url', 'return_label',
+        'paginated', 'collect_contact', 'return_url', 'return_label', 'font_family',
     ];
 
     protected function casts(): array

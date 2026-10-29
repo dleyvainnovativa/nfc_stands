@@ -40,9 +40,11 @@ class SurveyController extends Controller
             'thank_you_message' => ['nullable', 'string', 'max:300'],
             'return_url' => ['nullable', 'url', 'max:2048'],
             'return_label' => ['nullable', 'string', 'max:60'],
+            'font_family' => ['nullable', Rule::in(array_keys(\App\Support\GoogleFont::options()))],
         ]);
         $data['paginated'] = $request->boolean('paginated');
         $data['collect_contact'] = $request->boolean('collect_contact');
+        $data['font_family'] = ($data['font_family'] ?? '') ?: null;
 
         $survey = Survey::create($data); // code + tenant_id auto-fill
 
@@ -65,9 +67,11 @@ class SurveyController extends Controller
             'thank_you_message' => ['nullable', 'string', 'max:300'],
             'return_url' => ['nullable', 'url', 'max:2048'],
             'return_label' => ['nullable', 'string', 'max:60'],
+            'font_family' => ['nullable', Rule::in(array_keys(\App\Support\GoogleFont::options()))],
         ]);
         $data['paginated'] = $request->boolean('paginated');
         $data['collect_contact'] = $request->boolean('collect_contact');
+        $data['font_family'] = ($data['font_family'] ?? '') ?: null;
 
         $questions = $this->validateQuestions($request);
 

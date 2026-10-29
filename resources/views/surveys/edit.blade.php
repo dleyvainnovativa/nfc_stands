@@ -58,6 +58,15 @@
                     <label class="form-label">Texto del botón <span class="text-subtle">(opcional)</span></label>
                     <input type="text" name="return_label" value="{{ old('return_label', $survey->return_label) }}" class="form-control" maxlength="60" placeholder="Síguenos / Volver al sitio">
                 </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tipografía</label>
+                    <select name="font_family" class="form-select">
+                        @foreach (\App\Support\GoogleFont::options() as $v => $l)
+                            <option value="{{ $v }}" @selected(old('font_family', $survey->font_family ?? '') === $v)>{{ $l }}</option>
+                        @endforeach
+                    </select>
+                    <div class="form-text text-muted-2">Se aplica a la encuesta pública.</div>
+                </div>
 
                 <div class="col-12 d-flex flex-column gap-2 mt-1">
                     <div class="form-check">

@@ -10,7 +10,8 @@
                placeholder="Texto" value="{{ $link['label'] ?? '' }}" maxlength="80">
         <input type="url" name="link_url[]" class="form-control" style="min-width:150px;flex:2 1 150px"
                placeholder="https://…" value="{{ $link['url'] ?? '' }}" maxlength="2048">
-        <button type="button" class="btn btn-outline-secondary remove-row flex-shrink-0"><i class="fa-solid fa-xmark"></i></button>
+        <button type="button" class="btn btn-outline-secondary dup-row flex-shrink-0" title="Duplicar"><i class="fa-solid fa-clone"></i></button>
+        <button type="button" class="btn btn-outline-secondary remove-row flex-shrink-0" title="Quitar"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <div class="d-flex gap-3 align-items-center flex-wrap mt-2" style="font-size:.82rem">

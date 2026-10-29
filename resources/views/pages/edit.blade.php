@@ -109,6 +109,14 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Tipografía</label>
+                            <select name="font_family" id="f_font" class="form-select">
+                                @foreach (\App\Support\GoogleFont::options() as $v => $l)
+                                    <option value="{{ $v }}" @selected(old('font_family', $page->font_family ?? '') === $v)>{{ $l }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-sm-4">
                             <label class="form-label">Fondo</label>
                             <select name="bg_style" id="f_bg" class="form-select">
@@ -247,11 +255,23 @@
 </style>
 
 @push('scripts')
+<script>window.FONT_URLS = @json(\App\Support\GoogleFont::urlMap());</script>
 <script>
 (function () {
     const form = document.getElementById('pageForm');
     const preview = document.getElementById('pagePreview');
     const wrap = preview.querySelector('.pp-wrap');
+
+    // Lazy-load a Google Font <link> the first time a family is previewed.
+    const FONT_URLS = window.FONT_URLS || {};
+    const fontLoaded = {};
+    function ensureFont(fam) {
+        if (!fam || !FONT_URLS[fam] || fontLoaded[fam]) return;
+        const l = document.createElement('link');
+        l.rel = 'stylesheet'; l.href = FONT_URLS[fam];
+        document.head.appendChild(l);
+        fontLoaded[fam] = true;
+    }
     const hex = /^#([0-9a-fA-F]{6})$/;
     let logoOverride = null;
 
@@ -281,6 +301,12 @@
         wrap.style.setProperty('--txt', txt);
         wrap.style.setProperty('--onp', onp);
         wrap.className = 'pp-wrap pp-bg-' + bgStyle;
+
+        const fam = el('f_font').value;
+        ensureFont(fam);
+        wrap.style.fontFamily = fam
+            ? "'" + fam + "', Inter, system-ui, -apple-system, sans-serif"
+            : 'Inter, system-ui, -apple-system, sans-serif';
 
         const shape = 'shape-' + el('f_shape').value;
         const fill = 'fill-' + el('f_fill').value;
@@ -322,7 +348,7 @@
     sText.addEventListener('input', () => { if (hex.test(sText.value)) sPick.value = sText.value; render(); });
     bText.addEventListener('input', () => { if (hex.test(bText.value)) bPick.value = bText.value; render(); });
 
-    ['f_name','f_title','f_desc','f_bg','f_shape','f_fill','f_textmode'].forEach(id => {
+    ['f_name','f_title','f_desc','f_bg','f_shape','f_fill','f_textmode','f_font'].forEach(id => {
         el(id).addEventListener('input', render);
         el(id).addEventListener('change', render);
     });
@@ -342,7 +368,30 @@
         rows.appendChild(row);
         render();
     });
+    // Copy live form state (typed values, picks, checkbox) from one row into a
+    // clone — cloneNode copies the original attributes, not what the user typed.
+    function copyRowState(src, dst) {
+        const s = src.querySelectorAll('input, select');
+        const d = dst.querySelectorAll('input, select');
+        s.forEach((node, i) => {
+            if (!d[i]) return;
+            if (node.type === 'checkbox') d[i].checked = node.checked;
+            else d[i].value = node.value;
+        });
+        const chk = dst.querySelector('.link-custom');
+        const colors = dst.querySelector('.link-colors');
+        if (chk && colors) colors.classList.toggle('d-none', !chk.checked);
+    }
+
     rows.addEventListener('click', (e) => {
+        if (e.target.closest('.dup-row')) {
+            const src = e.target.closest('.link-row');
+            const clone = src.cloneNode(true);
+            copyRowState(src, clone);
+            src.after(clone);
+            render();
+            return;
+        }
         if (e.target.closest('.remove-row') && rows.querySelectorAll('.link-row').length > 1) {
             e.target.closest('.link-row').remove();
             render();

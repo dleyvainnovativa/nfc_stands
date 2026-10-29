@@ -23,7 +23,7 @@ class Page extends Model
     protected $fillable = [
         'tenant_id', 'code', 'name', 'title', 'description', 'logo_path',
         'primary_color', 'secondary_color', 'button_shape', 'button_fill', 'bg_style',
-        'bg_color', 'text_mode', 'links', 'is_active',
+        'bg_color', 'text_mode', 'font_family', 'links', 'is_active',
     ];
 
     protected function casts(): array
@@ -98,6 +98,16 @@ class Page extends Model
     public function bgColor(): string
     {
         return $this->bg_color ?: self::DEFAULT_BG;
+    }
+
+    /**
+     * Colour for the mobile browser chrome (<meta name="theme-color">) so the
+     * status bar / toolbar blend into the page instead of showing white. Uses
+     * the solid background colour, or the top of the gradient (primary).
+     */
+    public function chromeColor(): string
+    {
+        return $this->bg_style === 'plain' ? $this->bgColor() : $this->brandPrimary();
     }
 
     /** Pick black or white text for the best contrast on a hex colour (YIQ). */
