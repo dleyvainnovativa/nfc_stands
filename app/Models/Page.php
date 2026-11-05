@@ -16,9 +16,9 @@ class Page extends Model
 {
     use HasTenant;
 
-    public const DEFAULT_PRIMARY = '#2e6be6';
-    public const DEFAULT_SECONDARY = '#1b34c4';
-    public const DEFAULT_BG = '#f4f5f7';
+    public const DEFAULT_PRIMARY = '#1150ed';
+    public const DEFAULT_SECONDARY = '#0a2fa8';
+    public const DEFAULT_BG = '#eaecff';
 
     protected $fillable = [
         'tenant_id', 'code', 'name', 'title', 'description', 'logo_path',

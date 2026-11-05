@@ -22,9 +22,9 @@ class Tenant extends Model
         'logo_path',
     ];
 
-    /** Fallback brand colours (Complemento blue) when a tenant sets none. */
-    public const DEFAULT_PRIMARY = '#2e6be6';
-    public const DEFAULT_SECONDARY = '#1b34c4';
+    /** Fallback brand colours (tapio Electric Blue) when a tenant sets none. */
+    public const DEFAULT_PRIMARY = '#1150ed';
+    public const DEFAULT_SECONDARY = '#0a2fa8';
 
     protected function casts(): array
     {

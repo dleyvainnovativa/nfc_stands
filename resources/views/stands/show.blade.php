@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', ($stand->label ?: $stand->code) . ' · NFC Stands')
+@section('title', ($stand->label ?: $stand->code) . ' · tapio')
 @section('page-title', 'Stand')
 
 @section('content')

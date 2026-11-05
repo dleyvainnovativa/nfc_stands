@@ -1,8 +1,7 @@
 @php($u = auth()->user())
 <aside class="sidebar">
     <div class="brand">
-        <span class="logo-mark"><i class="fa-solid fa-wifi"></i></span>
-        <span>NFC Stands</span>
+        <img class="brand-logo" src="{{ asset('img/tapio-logo-blue.png') }}" alt="tapio">
     </div>
 
     <nav class="flex-grow-1 overflow-auto">

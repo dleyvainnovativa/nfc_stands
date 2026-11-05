@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Nueva encuesta · NFC Stands')
+@section('title', 'Nueva encuesta · tapio')
 @section('page-title', 'Nueva encuesta')
 
 @section('content')

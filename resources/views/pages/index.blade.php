@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Páginas · NFC Stands')
+@section('title', 'Páginas · tapio')
 @section('page-title', 'Páginas')
 
 @section('content')

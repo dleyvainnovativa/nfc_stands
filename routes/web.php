@@ -33,6 +33,9 @@ Route::get('/p/{code}/go/{i}', [PublicPageController::class, 'go'])->whereNumber
 Route::get('/s/{code}', [SurveyResponseController::class, 'show'])->name('survey.public');
 Route::post('/s/{code}', [SurveyResponseController::class, 'store'])->name('survey.public.submit');
 
+// Public marketing landing (tapio.mx home)
+Route::view('/', 'landing')->name('landing');
+
 /*
 |--------------------------------------------------------------------------
 | Guest
@@ -43,7 +46,6 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [LoginController::class, 'store'])->name('login.store');
 });
 
-Route::redirect('/', '/login');
 
 /*
 |--------------------------------------------------------------------------

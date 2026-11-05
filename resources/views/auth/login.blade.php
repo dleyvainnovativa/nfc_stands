@@ -1,14 +1,13 @@
 @extends('layouts.guest')
-@section('title', 'Iniciar sesión · NFC Stands')
+@section('title', 'Iniciar sesión · tapio')
 
 @section('content')
 <div class="auth-split">
     {{-- Brand panel (desktop) --}}
     <aside class="auth-brand">
         <div>
-            <span class="brand-mark"><i class="fa-solid fa-wifi"></i></span>
-            <div class="brand-name">NFC Stands</div>
-            <div class="brand-tagline">Tus stands NFC, en un solo lugar.</div>
+            <img class="brand-logo" src="{{ asset('img/tapio-logo-white.png') }}" alt="tapio">
+            <div class="brand-tagline">Un toque y listo.</div>
         </div>
 
         <ul class="brand-points">
@@ -21,8 +20,7 @@
     {{-- Form panel --}}
     <div class="auth-form">
         <div class="mobile-brand">
-            <span class="logo-mark"><i class="fa-solid fa-wifi"></i></span>
-            <span>NFC Stands</span>
+            <img class="brand-logo" src="{{ asset('img/tapio-logo-blue.png') }}" alt="tapio">
         </div>
 
         <h1 class="h4 fw-bold mb-1">Iniciar sesión</h1>

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Editar encuesta · NFC Stands')
+@section('title', 'Editar encuesta · tapio')
 @section('page-title', 'Editar encuesta')
 
 @php

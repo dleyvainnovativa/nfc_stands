@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Marca · NFC Stands')
+@section('title', 'Marca · tapio')
 @section('page-title', 'Marca')
 
 @php
@@ -30,7 +30,7 @@
                                        style="width:44px;height:38px;padding:2px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--bg-elevated)">
                                 <input type="text" name="primary_color" id="primaryText" value="{{ $primary }}"
                                        class="form-control mono @error('primary_color') is-invalid @enderror"
-                                       maxlength="7" placeholder="#2e6be6">
+                                       maxlength="7" placeholder="#1150ed">
                             </div>
                             @error('primary_color') <div class="text-danger mt-1" style="font-size:.82rem">{{ $message }}</div> @enderror
                         </div>
@@ -41,7 +41,7 @@
                                        style="width:44px;height:38px;padding:2px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--bg-elevated)">
                                 <input type="text" name="secondary_color" id="secondaryText" value="{{ $secondary }}"
                                        class="form-control mono @error('secondary_color') is-invalid @enderror"
-                                       maxlength="7" placeholder="#1b34c4">
+                                       maxlength="7" placeholder="#0a2fa8">
                             </div>
                             @error('secondary_color') <div class="text-danger mt-1" style="font-size:.82rem">{{ $message }}</div> @enderror
                         </div>

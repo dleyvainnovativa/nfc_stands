@@ -1,21 +1,21 @@
 /* =====================================================================
-   theme.css — NFC Stands design system
+   theme.css — tapio design system
    "Linear meets Stripe": clean, calm, trustworthy, slightly clinical.
-   Inter (UI) + JetBrains Mono (code), 8px radius, subtle shadows.
+   Hanken Grotesk (UI) + JetBrains Mono (code), 8px radius, subtle shadows.
    Light/dark via [data-theme] on <html>, persisted by cookie + app.js.
    ===================================================================== */
 
 /* ---- Fonts (self-less: load via Google Fonts link in <head>) -------- */
 
 :root {
-  /* Brand accents — Complemento (Marketing & Diseño) blue palette */
-  --brand-blue: #2e6be6;      /* primary azure (mid blob) */
-  --brand-blue-600: #2156d6;  /* hover */
-  --brand-blue-700: #1a42b8;  /* pressed / accent text */
-  --brand-sky: #5aa7f5;       /* light sky accent (left blob) */
-  --brand-royal: #1b34c4;     /* deep royal (bottom blob) */
-  --brand-ink: #1e2733;       /* logo navy */
-  --brand-cream: #ece9e3;     /* warm off-white (logo backdrop) */
+  /* Brand accents — tapio palette (Electric Blue / Sky Wave / Midnight Navy) */
+  --brand-blue: #1150ed;      /* Electric Blue — primary */
+  --brand-blue-600: #0e46d1;  /* hover */
+  --brand-blue-700: #0b39ad;  /* pressed / accent text */
+  --brand-sky: #67cdf6;       /* Sky Wave — light sky accent */
+  --brand-royal: #0a2fa8;     /* deep electric (gradient base / bottom blob) */
+  --brand-ink: #13152d;       /* Midnight Navy — logo navy */
+  --brand-cream: #eaecff;     /* Lavander Mist — soft brand backdrop */
   --brand-gradient: linear-gradient(135deg, var(--brand-sky), var(--brand-royal));
   --brand-gold: #d8a657;      /* review stars (not a brand accent) */
 
@@ -25,7 +25,7 @@
   --radius-lg: 14px;
 
   /* Typography */
-  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   /* Transitions */
@@ -57,7 +57,7 @@
 
   --accent: var(--brand-blue);
   --accent-hover: var(--brand-blue-600);
-  --accent-soft: #e6eefc;
+  --accent-soft: #eaecff;           /* Lavander Mist */
   --accent-text: var(--brand-blue-700);
   --accent-2: var(--brand-royal);   /* secondary brand colour */
 
@@ -89,11 +89,11 @@
   --text-subtle: #6b7280;
   --text-inverse: #0f1115;
 
-  --accent: #6aa3f7;
-  --accent-hover: #83b4f9;
-  --accent-soft: #16233f;
-  --accent-text: #9cc2fb;
-  --accent-2: #5b7fe6;   /* secondary brand colour */
+  --accent: #4f8bff;
+  --accent-hover: #6ea2ff;
+  --accent-soft: #15214a;
+  --accent-text: #8fbaff;
+  --accent-2: #67cdf6;   /* secondary brand colour (Sky Wave) */
 
   --success: #32d583;
   --success-soft: #11291f;
@@ -275,6 +275,11 @@ code { color: var(--accent-text); background: transparent; }
   background: var(--brand-gradient);
   display: grid; place-items: center; color: #fff; font-size: 0.9rem;
 }
+/* tapio wordmark logo (replaces the generic mark+text lockup) */
+.brand-logo { height: 26px; width: auto; display: block; }
+.sidebar .brand .brand-logo { height: 24px; }
+.auth-brand .brand-logo { height: 34px; margin-bottom: 0.2rem; }
+.mobile-brand .brand-logo { height: 26px; }
 .sidebar .nav-section {
   padding: 0.5rem 0.75rem; font-size: 0.72rem; text-transform: uppercase;
   letter-spacing: 0.06em; color: var(--text-subtle); margin-top: 0.5rem;

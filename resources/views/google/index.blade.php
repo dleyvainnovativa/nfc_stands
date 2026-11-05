@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Reseñas de Google · NFC Stands')
+@section('title', 'Reseñas de Google · tapio')
 @section('page-title', 'Reseñas de Google')
 
 @section('content')

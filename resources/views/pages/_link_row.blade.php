@@ -21,7 +21,7 @@
         </label>
         <div class="link-colors d-flex gap-2 align-items-center {{ $hasCustom ? '' : 'd-none' }}">
             <span class="text-muted-2">Fondo</span>
-            <input type="color" class="link-bg-pick" value="{{ $link['bg'] ?? '#2e6be6' }}"
+            <input type="color" class="link-bg-pick" value="{{ $link['bg'] ?? '#1150ed' }}"
                    style="width:34px;height:30px;padding:1px;border:1px solid var(--border-strong);border-radius:6px;background:var(--bg-elevated)">
             <span class="text-muted-2">Texto</span>
             <input type="color" class="link-text-pick" value="{{ $link['text'] ?? '#ffffff' }}"

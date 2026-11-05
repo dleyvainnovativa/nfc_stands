@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Etiquetas en blanco · NFC Stands')
+@section('title', 'Etiquetas en blanco · tapio')
 @section('page-title', 'Etiquetas en blanco')
 
 @section('content')

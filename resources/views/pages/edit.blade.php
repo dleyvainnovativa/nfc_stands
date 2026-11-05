@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Editar página · NFC Stands')
+@section('title', 'Editar página · tapio')
 @section('page-title', 'Editar página')
 
 @php
@@ -305,8 +305,8 @@
         const fam = el('f_font').value;
         ensureFont(fam);
         wrap.style.fontFamily = fam
-            ? "'" + fam + "', Inter, system-ui, -apple-system, sans-serif"
-            : 'Inter, system-ui, -apple-system, sans-serif';
+            ? "'" + fam + "', 'Hanken Grotesk', system-ui, -apple-system, sans-serif"
+            : "'Hanken Grotesk', system-ui, -apple-system, sans-serif";
 
         const shape = 'shape-' + el('f_shape').value;
         const fill = 'fill-' + el('f_fill').value;
@@ -363,7 +363,7 @@
         row.querySelector('.link-colors')?.classList.add('d-none');
         const bgv = row.querySelector('.link-bg-val'); if (bgv) bgv.value = '';
         const txv = row.querySelector('.link-text-val'); if (txv) txv.value = '';
-        const bgp = row.querySelector('.link-bg-pick'); if (bgp) bgp.value = '#2e6be6';
+        const bgp = row.querySelector('.link-bg-pick'); if (bgp) bgp.value = '#1150ed';
         const txp = row.querySelector('.link-text-pick'); if (txp) txp.value = '#ffffff';
         rows.appendChild(row);
         render();

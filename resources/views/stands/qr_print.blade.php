@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>QR · {{ $stand->label ?: $stand->code }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
-        :root { --text:#1a1d23; --muted:#667085; --border:#e4e7ec; --accent:#2e6be6; }
+        :root { --text:#1a1d23; --muted:#667085; --border:#e4e7ec; --accent:#1150ed; }
         * { box-sizing:border-box; }
-        body { margin:0; font-family:Inter,system-ui,sans-serif; color:var(--text);
+        body { margin:0; font-family:"Hanken Grotesk",system-ui,sans-serif; color:var(--text);
                background:#f7f8fa; display:grid; place-items:center; min-height:100vh; padding:2rem; }
         .sheet { background:#fff; border:1px solid var(--border); border-radius:14px;
                  padding:2.5rem; text-align:center; max-width:420px; width:100%; }
