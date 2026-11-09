@@ -275,11 +275,12 @@ code { color: var(--accent-text); background: transparent; }
   background: var(--brand-gradient);
   display: grid; place-items: center; color: #fff; font-size: 0.9rem;
 }
-/* tapio wordmark logo (replaces the generic mark+text lockup) */
-.brand-logo { height: 26px; width: auto; display: block; }
-.sidebar .brand .brand-logo { height: 24px; }
-.auth-brand .brand-logo { height: 34px; margin-bottom: 0.2rem; }
-.mobile-brand .brand-logo { height: 26px; }
+/* tapio wordmark logo (replaces the generic mark+text lockup).
+   Scoped to panel chrome only — a bare .brand-logo rule would collide with the
+   public survey/page layouts, which reuse the same class for a tenant logo. */
+.sidebar .brand .brand-logo { height: 24px; width: auto; display: block; }
+.auth-brand .brand-logo { height: 34px; width: auto; display: block; margin-bottom: 0.2rem; }
+.mobile-brand .brand-logo { height: 26px; width: auto; display: block; }
 .sidebar .nav-section {
   padding: 0.5rem 0.75rem; font-size: 0.72rem; text-transform: uppercase;
   letter-spacing: 0.06em; color: var(--text-subtle); margin-top: 0.5rem;

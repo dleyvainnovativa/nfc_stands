@@ -63,7 +63,7 @@
                         </td>
                         <td class="text-end mono" data-label="Escaneos">{{ number_format($stand->scans_total) }}</td>
                         <td class="text-muted-2" style="font-size:.86rem" data-label="Último escaneo">
-                            {{ $stand->last_scan_at?->diffForHumans() ?? '—' }}
+                            {{ $stand->last_scan_at?->locale('es')->diffForHumans() ?? '—' }}
                         </td>
                         <td class="cell-actions text-end pe-3">
                             <a href="{{ route('stands.show', $stand) }}" class="btn btn-sm btn-outline-secondary">Abrir</a>

@@ -57,7 +57,7 @@
                     <div class="fw-semibold">{{ $place->displayName() }}</div>
                     <div class="text-subtle mono" style="font-size:.78rem">{{ $place->place_id }}</div>
                     <div class="text-subtle" style="font-size:.78rem">
-                        Última sincronización: {{ $place->last_synced_at?->diffForHumans() ?? 'nunca' }}
+                        Última sincronización: {{ $place->last_synced_at?->locale('es')->diffForHumans() ?? 'nunca' }}
                     </div>
                 </div>
                 <div class="d-flex gap-2">
@@ -125,7 +125,7 @@
 @endforelse
 
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.3/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 (function () {
     if (!window.Chart) return;

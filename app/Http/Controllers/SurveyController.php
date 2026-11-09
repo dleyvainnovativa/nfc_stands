@@ -148,10 +148,13 @@ class SurveyController extends Controller
                 $config = ['max' => $maxVal];
             }
 
+            $hint = trim((string) ($row['hint'] ?? ''));
+
             $clean[] = [
                 'id' => isset($row['id']) && $row['id'] !== '' ? (int) $row['id'] : null,
                 'type' => $type,
                 'prompt' => mb_substr($prompt, 0, 255),
+                'hint' => $hint !== '' ? mb_substr($hint, 0, 300) : null,
                 'options' => $options,
                 'config' => $config,
                 'required' => ! empty($row['required']),
@@ -180,10 +183,14 @@ class SurveyController extends Controller
             } else {
                 $model = new SurveyQuestion();
                 $model->survey_id = $survey->id;
-                // tenant_id auto-fills via HasTenant on create
+                // Inherit the tenant from the survey, not the acting tenant: a
+                // super-admin editing a survey without "Ver como" has no acting
+                // tenant, which would otherwise write a null tenant_id and 500.
+                $model->tenant_id = $survey->tenant_id;
             }
             $model->type = $q['type'];
             $model->prompt = $q['prompt'];
+            $model->hint = $q['hint'];
             $model->options = $q['options'];
             $model->config = $q['config'];
             $model->required = $q['required'];

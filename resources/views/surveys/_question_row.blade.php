@@ -5,6 +5,7 @@
     $qType = $q->type ?? 'single';
     $qPrompt = $q->prompt ?? '';
     $qRequired = $q?->required ?? false;
+    $qHint = $q->hint ?? '';
     $qOptions = $q && is_array($q->options) ? implode("\n", $q->options) : '';
     $qMax = $q?->ratingMax() ?? 5;
     $isChoice = in_array($qType, ['single','multi'], true);
@@ -36,6 +37,9 @@
 
         <input type="text" name="{{ $name }}[prompt]" class="form-control mb-2"
                placeholder="Enunciado de la pregunta" maxlength="255" value="{{ $qPrompt }}">
+
+        <input type="text" name="{{ $name }}[hint]" class="form-control form-control-sm mb-2"
+               placeholder="Descripción o ayuda (opcional)" maxlength="300" value="{{ $qHint }}">
 
         {{-- Choice options --}}
         <div data-for="options" class="{{ $isChoice ? '' : 'd-none' }}">

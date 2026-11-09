@@ -1,10 +1,13 @@
 @php($err = $errors->first("answers.{$q->id}"))
 <div class="card q-card" @if($q->required) data-required="1" @endif data-qid="{{ $q->id }}">
     <div class="card-body">
-        <label class="fw-semibold d-block mb-2">
+        <label class="fw-semibold d-block {{ $q->hint ? 'mb-1' : 'mb-2' }}">
             {{ $q->prompt }}
             @if ($q->required)<span style="color:var(--danger)">*</span>@endif
         </label>
+        @if ($q->hint)
+            <p class="text-muted-2 mb-2" style="font-size:.85rem">{{ $q->hint }}</p>
+        @endif
 
         @switch($q->type)
             @case('single')

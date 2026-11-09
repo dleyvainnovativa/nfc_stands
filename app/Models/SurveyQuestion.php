@@ -18,7 +18,7 @@ class SurveyQuestion extends Model
     public const TYPE_TEXT = 'text';
 
     protected $fillable = [
-        'tenant_id', 'survey_id', 'type', 'prompt', 'options', 'config', 'required', 'position',
+        'tenant_id', 'survey_id', 'type', 'prompt', 'hint', 'options', 'config', 'required', 'position',
     ];
 
     protected function casts(): array

@@ -81,7 +81,7 @@
     </div>
     <div class="col-12 col-md-4">
         <div class="card stat-card h-100"><div class="stat-label">Último escaneo</div>
-            <div class="stat-value" style="font-size:1.15rem">{{ $stand->last_scan_at?->diffForHumans() ?? '—' }}</div></div>
+            <div class="stat-value" style="font-size:1.15rem">{{ $stand->last_scan_at?->locale('es')->diffForHumans() ?? '—' }}</div></div>
     </div>
 </div>
 
@@ -124,7 +124,7 @@
 </div>
 
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.3/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     (function () {
         const el = document.getElementById('scanChart');
@@ -148,6 +148,7 @@
                 }
             }
         });
+        console.log('Chart.js version', Chart.version);
         document.getElementById('copyUrl')?.addEventListener('click', async () => {
             try {
                 await navigator.clipboard.writeText(document.getElementById('pubUrl').textContent.trim());
